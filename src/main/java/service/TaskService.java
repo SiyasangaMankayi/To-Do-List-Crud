@@ -4,6 +4,8 @@ package com.example.todolistcrud.service;
 import com.example.todolistcrud.entity.Task;
 import com.example.todolistcrud.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import com.example.todolistcrud.exception.TaskNotFoundException;
+
 
 import java.util.List;
 
@@ -28,30 +30,33 @@ public class TaskService {
 
     // Get one task
     public Task getTaskById(Long id) {
-        return taskRepository.findById(id).orElse(null);
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
     }
 
     // Update task
     public Task updateTask(Long id, Task newTask) {
 
-        Task task = taskRepository.findById(id).orElse(null);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
 
-        if (task != null) {
+        task.setTitle(newTask.getTitle());
+        task.setDescription(newTask.getDescription());
+        task.setDueDate(newTask.getDueDate());
+        task.setCompleted(newTask.isCompleted());
 
-            task.setTitle(newTask.getTitle());
-            task.setDescription(newTask.getDescription());
-            task.setDueDate(newTask.getDueDate());
-            task.setCompleted(newTask.isCompleted());
+        return taskRepository.save(task);
+    }
+        // Delete task
+        public void deleteTask (Long id){
 
-            return taskRepository.save(task);
+            if (!taskRepository.existsById(id)) {
+                throw new TaskNotFoundException("Task not found with id: " + id);
+            }
+
+            taskRepository.deleteById(id);
+
+
         }
 
-        return null;
     }
-
-    // Delete task
-    public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
-    }
-
-}
