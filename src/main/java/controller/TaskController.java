@@ -35,7 +35,6 @@ public class TaskController {
         return convertToDTO(taskService.createTask(task));
     }
 
-
     // Get all tasks
     @GetMapping
     public List<TaskResponseDTO> getAllTasks() {

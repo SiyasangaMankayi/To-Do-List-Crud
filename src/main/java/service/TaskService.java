@@ -20,6 +20,11 @@ public class TaskService {
 
     // Create task
     public Task createTask(Task task) {
+
+        if (taskRepository.existsByTitle(task.getTitle())) {
+            throw new IllegalArgumentException("Task already exists!");
+        }
+
         return taskRepository.save(task);
     }
 
